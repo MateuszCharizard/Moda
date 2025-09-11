@@ -47,7 +47,7 @@ export default function Clothing() {
     checkUser();
   }, [router]);
 
-  // Typing animation
+  // Typing animation function
   const typeAssistantReply = (fullText) => {
     let index = 0;
     const interval = 20;
@@ -76,7 +76,7 @@ export default function Clothing() {
     typeChar();
   };
 
-  // Submit chat message
+  // Submit handler without "Typing..." message
   const handleChatSubmit = async (e) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
@@ -84,9 +84,6 @@ export default function Clothing() {
     setChatReplies((prev) => [...prev, { role: 'user', content: chatInput }]);
     setChatLoading(true);
     setChatError(false);
-
-    // Add typing placeholder
-    setChatReplies((prev) => [...prev, { role: 'assistant', content: 'Typing...', isTyping: true }]);
 
     try {
       const res = await fetch('/api/chat', {
@@ -96,16 +93,12 @@ export default function Clothing() {
       });
       const data = await res.json();
 
-      // Remove typing placeholder
-      setChatReplies((prev) => prev.filter((msg) => !msg.isTyping));
-
       if (data.reply) {
         typeAssistantReply(data.reply);
       } else {
         setChatReplies((prev) => [...prev, { role: 'assistant', content: 'Sorry, no reply.' }]);
       }
     } catch (err) {
-      setChatReplies((prev) => prev.filter((msg) => !msg.isTyping));
       setChatReplies((prev) => [...prev, { role: 'assistant', content: 'Error contacting AI service.' }]);
       setChatError(true);
     } finally {
@@ -125,6 +118,7 @@ export default function Clothing() {
     }, 0);
   };
 
+  // Auto-scroll
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -133,7 +127,7 @@ export default function Clothing() {
 
   if (authChecking) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <svg
           className="animate-spin h-8 w-8 text-gray-600"
           xmlns="http://www.w3.org/2000/svg"
@@ -195,13 +189,40 @@ export default function Clothing() {
           ))}
         </div>
 
+        {/* Lazy loading spinner here instead of in chat */}
+        {chatLoading && (
+          <div className="flex justify-center mb-2">
+            <svg
+              className="animate-spin h-6 w-6 text-gray-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-label="Loading"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              ></path>
+            </svg>
+          </div>
+        )}
+
         <div className="relative flex items-center w-full">
           <input
             type="text"
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             placeholder="Ask about our clothing..."
-            className="w-full border border-gray-300 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 pr-10 transition bg-white shadow-sm"
+            className="w-full border text-neutral-500 border-gray-300 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 pr-10 transition bg-slate-200 shadow-sm"
             disabled={chatLoading}
             aria-label="Chat input"
             autoComplete="off"
