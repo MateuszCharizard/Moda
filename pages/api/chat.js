@@ -1,17 +1,34 @@
 import { GoogleGenAI } from "@google/genai";
 
+export const runtime = 'edge';
+
 const ai = new GoogleGenAI({});
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return new Response(
+      JSON.stringify({ error: "Method Not Allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
   }
 
-  // ensure body is parsed
-  const { message } = req.body;
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: "Invalid JSON" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  const { message } = body;
 
   if (!message || typeof message !== "string" || message.trim() === "") {
-    return res.status(400).json({ error: "No message provided" });
+    return new Response(
+      JSON.stringify({ error: "No message provided" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   const prompt = `
@@ -37,9 +54,15 @@ Assistant:
       reply = "Here are some gym clothing brands: Nike, Adidas, Gymshark, Lululemon, Under Armour.";
     }
 
-    return res.status(200).json({ reply });
+    return new Response(
+      JSON.stringify({ reply }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    // console.error not recommended in edge, can use console.log if needed
+    return new Response(
+      JSON.stringify({ error: "Internal Server Error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
