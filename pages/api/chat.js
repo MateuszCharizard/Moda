@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 export default function handler(req, res) {
   return res.status(503).json({
     error: 'Chat service is currently disabled',
