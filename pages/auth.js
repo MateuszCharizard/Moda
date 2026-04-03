@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useRouter } from 'next/router'; // Import useRouter for redirection
-import { supabase } from '../lib/supabase';
+import { useRouter } from 'next/router';
+import { useAuth } from '../lib/AuthContext';
 
 export default function Auth() {
   const [isSignup, setIsSignup] = useState(true);
@@ -10,7 +10,8 @@ export default function Auth() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
+  const { signUp, signIn } = useAuth();
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -21,18 +22,19 @@ export default function Auth() {
     try {
       let result;
       if (isSignup) {
-        result = await supabase.auth.signUp({ email, password });
+        result = await signUp(email, password);
       } else {
-        result = await supabase.auth.signInWithPassword({ email, password });
+        result = await signIn(email, password);
       }
 
       if (result.error) {
-        setError(result.error.message);
+        setError(result.error);
       } else {
-        setMessage(isSignup ? 'Signup successful! Check your email for confirmation.' : 'Login successful!');
+        setMessage(isSignup ? 'Signup successful!' : 'Login successful!');
         if (!isSignup) {
-          // Redirect to /clothing after successful login
-          router.push('/clothing');
+          setTimeout(() => {
+            router.push('/clothing');
+          }, 500);
         }
       }
     } catch (err) {

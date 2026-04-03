@@ -24,3 +24,79 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* High Contrast Mode */
+.high-contrast-mode {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast-mode * {
+  background-color: inherit;
+  color: inherit;
+}
+
+.high-contrast-mode button,
+.high-contrast-mode input,
+.high-contrast-mode textarea,
+.high-contrast-mode select {
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+.high-contrast-mode button:hover {
+  background-color: #333333 !important;
+}
+
+.high-contrast-mode a {
+  color: #ffff00 !important;
+  text-decoration: underline;
+}
+
+.high-contrast-mode .bg-white {
+  background-color: #1a1a1a !important;
+  border: 2px solid #ffffff !important;
+}
+
+.high-contrast-mode .bg-gray-50 {
+  background-color: #0a0a0a !important;
+}
+
+.high-contrast-mode .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #000000, #1a1a1a) !important;
+}
+
+.high-contrast-mode .text-gray-700,
+.high-contrast-mode .text-gray-900,
+.high-contrast-mode .text-gray-600 {
+  color: #ffffff !important;
+}
+
+.high-contrast-mode .border-gray-300 {
+  border-color: #ffffff !important;
+}
+
+.high-contrast-mode .shadow-lg,
+.high-contrast-mode .shadow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Font scaling support */
+html {
+  font-size: 16px;
+}
+
+html.text-sm {
+  font-size: 14px;
+}
+
+html.text-lg {
+  font-size: 18px;
+}
+

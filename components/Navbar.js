@@ -2,33 +2,15 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../lib/AuthContext';
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false); // For mobile menu toggle
-  const [user, setUser] = useState(null); // To track auth state
+  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
   const router = useRouter();
 
-  // Check auth state on mount
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-    };
-    fetchUser();
-
-    // Listen for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => authListener.subscription.unsubscribe();
-  }, []);
-
-  // Toggle mobile menu
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // Animation variants for links
   const linkVariants = {
     hover: { scale: 1.05, color: '#1a202c' },
     tap: { scale: 0.95 },
@@ -122,7 +104,7 @@ export default function Navbar() {
             <Link href="/explore" className="text-lg hover:text-gray-900 transition-colors" onClick={toggleMenu}>
               Explore
             </Link>
-            <Link href="/clothingai" className="text-lg hover:text-gray-900 transition-colors" onClick={toggleMenu}>
+            <Link href="/clothing" className="text-lg hover:text-gray-900 transition-colors" onClick={toggleMenu}>
               ClothingAI
             </Link>
             <Link href="/clothing" className="text-lg hover:text-gray-900 transition-colors" onClick={toggleMenu}>
